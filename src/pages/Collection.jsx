@@ -5,12 +5,68 @@ import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
 function Collection() {
-  const { products } = useContext(ShopContext);
+  const { products, search, showSearch } = useContext(ShopContext);
+
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
+  const [sortType, setSortType] = useState("relevant");
+  const [category, setCategory] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
+  const toggleCategory = (e) => {
+    if (category.includes(e.target.value)) {
+      setCategory((prev) => prev.filter((p) => p !== e.target.value));
+    } else {
+      setCategory((prev) => [...prev, e.target.value]);
+    }
+  };
+
+  const toggleSubCategory = (e) => {
+    if (subCategory.includes(e.target.value)) {
+      setSubCategory((prev) => prev.filter((p) => p !== e.target.value));
+    } else {
+      setSubCategory((prev) => [...prev, e.target.value]);
+    }
+  };
+
+  const applyFilter = () => {
+    let copy = products.slice();
+    if (showSearch && search) {
+      copy = copy.filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    if (category.length > 0) {
+      copy = copy.filter((c) => category.includes(c.category));
+    }
+    if (subCategory.length > 0) {
+      copy = copy.filter((c) => subCategory.includes(c.subCategory));
+    }
+    setFilterProducts(copy);
+  };
+
+  const sortedProducts = () => {
+    const fpCopy = filterProducts.slice();
+    switch (sortType) {
+      case "low-high":
+        setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
+        break;
+      case "high-low":
+        setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
+        break;
+
+      default:
+        break;
+    }
+  };
+
   useEffect(() => {
-    setFilterProducts(products);
-  }, [products]);
+    sortedProducts();
+  }, [sortType]);
+
+  useEffect(() => {
+    applyFilter();
+  }, [category, subCategory, products, search, showSearch]);
+
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
       {/* Filter Options */}
@@ -35,15 +91,30 @@ function Collection() {
           <p className="mb-3 text-sm font-medium ">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <p className="flex gap-2">
-              <input type="checkbox" className="w-3" value={"Men"} />
+              <input
+                type="checkbox"
+                className="w-3"
+                value={"Men"}
+                onChange={toggleCategory}
+              />
               Men
             </p>
             <p className="flex gap-2">
-              <input type="checkbox" className="w-3" value={"Women"} />
+              <input
+                type="checkbox"
+                className="w-3"
+                value={"Women"}
+                onChange={toggleCategory}
+              />
               Women
             </p>
             <p className="flex gap-2">
-              <input type="checkbox" className="w-3" value={"Kids"} />
+              <input
+                type="checkbox"
+                className="w-3"
+                value={"Kids"}
+                onChange={toggleCategory}
+              />
               Kids
             </p>
           </div>
@@ -57,15 +128,30 @@ function Collection() {
           <p className="mb-3 text-sm font-medium ">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <p className="flex gap-2">
-              <input type="checkbox" className="w-3" value={"Topwear"} />
+              <input
+                type="checkbox"
+                className="w-3"
+                value={"Topwear"}
+                onChange={toggleSubCategory}
+              />
               Topwear
             </p>
             <p className="flex gap-2">
-              <input type="checkbox" className="w-3" value={"Bottomwear"} />
+              <input
+                type="checkbox"
+                className="w-3"
+                value={"Bottomwear"}
+                onChange={toggleSubCategory}
+              />
               Bottomwear
             </p>
             <p className="flex gap-2">
-              <input type="checkbox" className="w-3" value={"Winterwear"} />
+              <input
+                type="checkbox"
+                className="w-3"
+                value={"Winterwear"}
+                onChange={toggleSubCategory}
+              />
               Winterwear
             </p>
           </div>
@@ -73,10 +159,13 @@ function Collection() {
       </div>
       {/* Right side */}
       <div className="flex-1">
-        <div className="flex justify-between text-base  sm:text-2xl mb-4">
+        <div className="flex justify-between text-base  sm:text-2xl  mb-4">
           <Title text1="ALL" text2="COLLECTIONS" />
           {/* SORT */}
-          <select className="border-2 border-gray-300 text-sm pz-2">
+          <select
+            onChange={(e) => setSortType(e.target.value)}
+            className="border-2 border-gray-300 text-sm pz-2 "
+          >
             <option value="relevant">Sort by: Relevant</option>
             <option value="low-high">Sort by: Low to High</option>
             <option value="high-low">Sort by: High to Low</option>

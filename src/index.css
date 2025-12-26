@@ -16,3 +16,15 @@
     color: white;
   }
 }
+::-webkit-scrollbar {
+  width: 0; /* width 0 rakhne se scrollbar nazar nahi aayega */
+  height: 0; /* horizontal scrollbar ke liye */
+}
+
+/* Optional: scrollbar track aur thumb ko bhi hide karna */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}

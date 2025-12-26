@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
@@ -11,11 +11,24 @@ import PlaceOrder from "./pages/PlaceOrder";
 import Orders from "./pages/Orders";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { ToastContainer } from "react-toastify";
+import SearchBar from "./components/SearchBar";
+import { useContext, useEffect } from "react";
+import { ShopContext } from "./context/ShopContext";
 
 function App() {
+  const navigate = useNavigate("/");
+  const { token } = useContext(ShopContext);
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, []);
   return (
     <div className="px-4 sm:px-[5vw] md:[px-7vw] lg:px-[9vw]">
+      <ToastContainer />
       <Navbar />
+      <SearchBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />
