@@ -4,11 +4,12 @@ import { ShopContext } from "../context/ShopContext";
 import star from "../assets/frontend_assets/star_icon.png";
 import stardull from "../assets/frontend_assets/star_dull_icon.png";
 import RelatedProducts from "../components/RelatedProducts";
+import { toast } from "sonner";
 
 function Product() {
   const { productId } = useParams();
   const [size, setSize] = useState("");
-  const { products, currency, addToCart } = useContext(ShopContext);
+  const { products, currency, addToCart, token } = useContext(ShopContext);
 
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState("");
@@ -94,7 +95,11 @@ function Product() {
             </div>
           </div>
           <button
-            onClick={() => addToCart(productData._id, size, 1)}
+            onClick={() =>
+              token
+                ? addToCart(productData._id, size, 1)
+                : toast.warning("Please login first to add items to cart")
+            }
             className="bg-black text-white px-8  cursor-pointer py-3 text-sm active:bg-gray-700"
           >
             ADD TO CART
