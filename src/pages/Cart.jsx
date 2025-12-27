@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import bin from "../assets/frontend_assets/bin_icon.png";
@@ -11,17 +11,15 @@ function Cart() {
   const [cartData, setCartData] = useState([]);
   useEffect(() => {
     const tempData = [];
-    for (const items in cartItems) {
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
-          tempData.push({
-            _id: items,
-            size: item,
-            quantity: cartItems[items][item],
-          });
-        }
-      }
-    }
+    cartItems.forEach((products) => {
+      products.sizes.forEach((product) => {
+        tempData.push({
+          _id: products.productId,
+          size: product.size,
+          quantity: product.quantity,
+        });
+      });
+    });
     setCartData(tempData);
   }, [cartItems]);
   return (
@@ -32,17 +30,14 @@ function Cart() {
       <div className="">
         {cartData.map((item, i) => {
           const productData = products.find((p) => p._id === item._id);
+          if (!productData) return null;
           return (
             <div
               key={i}
               className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols[4fr_2fr_0.5fr] items-center gap-4"
             >
               <div className="flex items-start gap-6">
-                <img
-                  src={productData.image[0]}
-                  className="w-16 sm:w-20"
-                  alt=""
-                />
+                <img src={productData.image} className="w-16 sm:w-20" alt="" />
 
                 <div>
                   <p className="text-xs sm:text-lg font-medium">
@@ -54,7 +49,7 @@ function Cart() {
                       {currency}
                       {productData.price}{" "}
                     </p>
-                    <p p className="px-2 sm:px-2  border bg-slate-200">
+                    <p className="px-2 sm:px-2  border bg-slate-200">
                       {" "}
                       {item.size}
                     </p>

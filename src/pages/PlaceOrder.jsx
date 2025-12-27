@@ -1,10 +1,9 @@
 import stripe from "../assets/frontend_assets/stripe_logo.png";
-import razor from "../assets/frontend_assets/razorpay_logo.png";
 import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axios from "axios";
 function PlaceOrder() {
   const {
@@ -45,49 +44,44 @@ function PlaceOrder() {
     }
     setLoading(true);
     try {
-      let orderItems = [];
-      for (const items in cartItems) {
-        for (const item in cartItems[items]) {
-          if (cartItems[items][item] > 0) {
-            const itemInfo = structuredClone(
-              products.find((p) => p._id === items)
-            );
-            if (itemInfo) {
-              itemInfo.size = item;
-              itemInfo.quantity = cartItems[items][item];
-              orderItems.push(itemInfo);
-            }
-          }
-        }
-      }
+      const items = cartItems.flatMap((item) => {
+        return item.sizes.map((s) => {
+          return {
+            productId: item.productId,
+            quantity: s.quantity,
+            size: s.size,
+          };
+        });
+      });
+
       let orderData = {
+        items,
+        deliveryCharges: delivery_fee,
         address: formData,
-        items: orderItems,
-        amount: getCartAmount() + delivery_fee,
+        paymentMethod: method,
       };
-      switch (method) {
-        case "cod": {
-          const response = await axios.post(
-            backendUrl + "/api/order/place",
-            orderData,
-            { headers: { token } }
-          );
-          if (response.data.success) {
-            setCartItems({});
-            toast.success("Order Placed");
-            navigate("/orders");
-            console.log(response.data.message);
-          } else {
-            toast.error(response.data.message);
-          }
 
-          break;
+      const response = await axios.post(
+        backendUrl + "/api/order/place",
+        orderData,
+        { headers: { token } }
+      );
+      if (method === "cod") {
+        if (response.data.success) {
+          setCartItems([]);
+          toast.success("Order Placed");
+          navigate("/orders");
+        } else {
+          toast.error(response.data.message);
         }
-
-        default:
+      } else {
+        if (response.data.url) {
+          window.location.href = response.data.url;
+        } else {
+          toast.error("Stripe session URL not found");
+        }
       }
     } catch (error) {
-      console.log(error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -212,17 +206,6 @@ function PlaceOrder() {
                 }`}
               ></p>
               <img className="h-5 mx-4" src={stripe} alt="" />
-            </div>
-            <div
-              onClick={() => setMethod("razor")}
-              className="flex items-center  gap-3 border p-2 px-3 cursor-pointer"
-            >
-              <p
-                className={`min-w-3.5 h-3.5 border rounded-full  ${
-                  method === "razor" ? "bg-green-400" : ""
-                }`}
-              ></p>
-              <img className="h-5 mx-4" src={razor} alt="" />
             </div>
             <div
               onClick={() => setMethod("cod")}

@@ -2,10 +2,14 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
-function ProductItem({id, image, name, price}) {
+function ProductItem({ id, image, name, price }) {
   const { currency } = useContext(ShopContext);
   return (
-    <Link className=" text-gray-700  cursor-pointer  " to={`/product/${id}`}>
+    <Link
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className=" text-gray-700  cursor-pointer  "
+      to={`/product/${id}`}
+    >
       <div className="overflow-hidden">
         <img
           src={image[0]}

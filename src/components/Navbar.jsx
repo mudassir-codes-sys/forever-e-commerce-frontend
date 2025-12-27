@@ -9,15 +9,24 @@ import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 function Navbar() {
   const [visible, setVisible] = useState(false);
-  const { showSearch, setShowSearch, getCartCount, navigate, token, setToken } =
-    useContext(ShopContext);
+  const [dropDownVisible, setDropdownVisible] = useState(false);
+  const {
+    showSearch,
+    setShowSearch,
+    getCartCount,
+    navigate,
+    token,
+    setToken,
+    cartItems,
+  } = useContext(ShopContext);
 
   //--------------logout function
 
   const logout = () => {
-    navigate("/login");
-    localStorage.removeItem("token");
     setToken("");
+    localStorage.removeItem("token");
+    navigate("/login");
+    setDropdownVisible(false);
   };
 
   return (
@@ -49,15 +58,24 @@ function Navbar() {
           className="w-5 cursor-pointer"
         />
         <div className="group relative">
-          <Link to="/login">
-            {" "}
-            <img src={profile} className="w-5 cursor-pointer" alt="" />
-          </Link>
-          {token && (
+          {/* <Link to="/login"> */}{" "}
+          <img
+            src={profile}
+            className="w-5 cursor-pointer"
+            alt=""
+            onClick={() => setDropdownVisible(!dropDownVisible)}
+          />
+          {/* </Link> */}
+          {token && dropDownVisible && (
             <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
               <div className=" flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 r">
                 <p className="cursor-pointer hover:text-black">My Profile</p>
-                <p className="cursor-pointer hover:text-black">Orders</p>
+                <p
+                  onClick={() => navigate("/orders")}
+                  className="cursor-pointer hover:text-black"
+                >
+                  Orders
+                </p>
                 <p onClick={logout} className="cursor-pointer hover:text-black">
                   Logout
                 </p>
@@ -68,7 +86,7 @@ function Navbar() {
         <Link to="/cart" className="relative">
           <img src={cart} className="min-w-5 w-5" alt="" />
           <p className="absolute left-2 bottom-0 w-4 text-center leading-4 bg-black  rounded-full text-[8px] text-white">
-            {getCartCount()}
+            {token && cartItems.length > 0 ? getCartCount() : "0"}
           </p>
         </Link>
         <img

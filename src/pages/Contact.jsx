@@ -1,4 +1,3 @@
-import React from "react";
 import Title from "../components/Title";
 import contact from "../assets/frontend_assets/contact_img.png";
 function Contact() {

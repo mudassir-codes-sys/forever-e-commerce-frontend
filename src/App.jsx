@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
@@ -11,22 +11,15 @@ import PlaceOrder from "./pages/PlaceOrder";
 import Orders from "./pages/Orders";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { ToastContainer } from "react-toastify";
 import SearchBar from "./components/SearchBar";
-import { useContext, useEffect } from "react";
-import { ShopContext } from "./context/ShopContext";
+import { Toaster } from "sonner";
+import ProtectedRoute from "./ProtectedRoute";
+import VerifyPage from "./pages/VerifyPage";
 
 function App() {
-  const navigate = useNavigate("/");
-  const { token } = useContext(ShopContext);
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, []);
   return (
     <div className="px-4 sm:px-[5vw] md:[px-7vw] lg:px-[9vw]">
-      <ToastContainer />
+      <Toaster richColors position="top-center" />
       <Navbar />
       <SearchBar />
       <Routes>
@@ -35,10 +28,33 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/product/:productId" element={<Product />} />
-        <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              {" "}
+              <Cart />{" "}
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
-        <Route path="/place-order" element={<PlaceOrder />} />
-        <Route path="/orders" element={<Orders />} />
+        <Route
+          path="/place-order"
+          element={
+            <ProtectedRoute>
+              <PlaceOrder />{" "}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />{" "}
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/success" element={<VerifyPage />} />
       </Routes>
       <Footer />
     </div>

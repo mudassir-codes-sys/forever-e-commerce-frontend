@@ -3,7 +3,8 @@ import { ShopContext } from "../context/ShopContext";
 import Title from "./Title";
 
 function CartTotal() {
-  const { currency, delivery_fee, getCartAmount } = useContext(ShopContext);
+  const { currency, delivery_fee, getCartAmount, cartItems } =
+    useContext(ShopContext);
 
   return (
     <div className="w-full">
@@ -22,7 +23,7 @@ function CartTotal() {
           <p>Shipping Fee</p>
           <p>
             {currency}
-            {delivery_fee}{" "}
+            {cartItems.length > 0 ? delivery_fee : "0"}
           </p>
         </div>
         <hr />

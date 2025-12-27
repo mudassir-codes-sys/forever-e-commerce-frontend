@@ -1,22 +1,24 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
+import GoogleLoginComponent from "../components/GoogleLoginComponent";
 function Login() {
   const [currentState, setCurrentState] = useState("Sign Up");
-  const { token, setToken, backendUrl } = useContext(ShopContext);
+  const { token, setToken, backendUrl, getUserCart, navigate } =
+    useContext(ShopContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   // ------------ Form Handler
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await axios.post(
         currentState === "Sign Up"
           ? backendUrl + "/api/user/register"
@@ -26,14 +28,20 @@ function Login() {
           : { email, password }
       );
       if (response.data.success) {
+        if (name) setName("");
+        setEmail("");
+        setPassword("");
         setToken(response.data.token);
         localStorage.setItem("token", response.data.token);
+        await getUserCart(response.data.token);
         navigate("/");
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,7 +60,7 @@ function Login() {
           className="w-full px-3 py-2 border border-gray-800"
           placeholder="Name"
           required
-          value={name}
+          value={name || ""}
           onChange={(e) => setName(e.target.value)}
         />
       )}
@@ -61,7 +69,7 @@ function Login() {
         className="w-full px-3 py-2 border border-gray-800"
         placeholder="Email"
         required
-        value={email}
+        value={email || ""}
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
@@ -69,9 +77,10 @@ function Login() {
         required
         className="w-full px-3 py-2 border border-gray-800"
         placeholder="Password"
-        value={password}
+        value={password || ""}
         onChange={(e) => setPassword(e.target.value)}
       />
+      <GoogleLoginComponent />
       <div className="w-full flex justify-between  text-sm mt-[-8px]">
         <p className="cursor-pointer"> Forgot your password?</p>
         {currentState === "Login" ? (
@@ -91,6 +100,7 @@ function Login() {
         )}
       </div>
       <button
+        disabled={loading}
         type="submit"
         className="bg-black text-white font-light px-8 py-2 mt-4 cursor-pointer"
       >
