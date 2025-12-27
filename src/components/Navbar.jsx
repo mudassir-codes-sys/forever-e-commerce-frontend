@@ -63,7 +63,9 @@ function Navbar() {
             src={profile}
             className="w-5 cursor-pointer"
             alt=""
-            onClick={() => setDropdownVisible(!dropDownVisible)}
+            onClick={() =>
+              token ? setDropdownVisible(!dropDownVisible) : navigate("/login")
+            }
           />
           {/* </Link> */}
           {token && dropDownVisible && (
