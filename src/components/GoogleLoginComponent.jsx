@@ -26,6 +26,9 @@ function GoogleLoginComponent() {
   };
   return (
     <GoogleLogin
+      size="large"
+      width={400}
+      shape="square"
       onSuccess={handleSuccess}
       onError={(err) => console.log(err)}
     />
