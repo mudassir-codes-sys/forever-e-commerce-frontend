@@ -3,15 +3,21 @@ import { ShopContext } from "../context/ShopContext";
 import drop from "../assets/frontend_assets/dropdown_icon.png";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../Slices/ProductSlice";
 
 function Collection() {
-  const { products, search, showSearch } = useContext(ShopContext);
-
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+  const { search, showSearch } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [sortType, setSortType] = useState("relevant");
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
+
+
+
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((p) => p !== e.target.value));

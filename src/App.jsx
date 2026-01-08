@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import "./App.css";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
@@ -15,8 +17,13 @@ import SearchBar from "./components/SearchBar";
 import { Toaster } from "sonner";
 import ProtectedRoute from "./ProtectedRoute";
 import VerifyPage from "./pages/VerifyPage";
+import { fetchProducts } from "./Slices/ProductSlice";
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
   return (
     <div className="px-4 sm:px-[5vw] md:[px-7vw] lg:px-[9vw]">
       <Toaster richColors position="top-center" />

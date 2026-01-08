@@ -25,13 +25,14 @@ function GoogleLoginComponent() {
     }
   };
   return (
-    <GoogleLogin
-      size="large"
-      width={400}
-      shape="square"
-      onSuccess={handleSuccess}
-      onError={(err) => console.log(err)}
-    />
+    <div className="w-full  mx-auto">
+      <GoogleLogin
+        size="large"
+        shape="square"
+        onSuccess={handleSuccess}
+        onError={(err) => console.log(err)}
+      />
+    </div>
   );
 }
 

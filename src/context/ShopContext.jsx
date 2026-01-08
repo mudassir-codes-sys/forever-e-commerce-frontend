@@ -10,21 +10,21 @@ const ShopContextProvider = ({ children }) => {
   const delivery_fee = 10;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [search, setSearch] = useState("");
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const navigate = useNavigate();
 
-  // -----------------Fetch All Products-----------------------------
-  const allProducts = async () => {
-    try {
-      const res = await axios.get(backendUrl + "/api/product/list");
-      setProducts(res.data.products);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || error.message);
-    }
-  };
+  // -------------------------------Fetch All Products-------------------------------
+  // const allProducts = async () => {
+  //   try {
+  //     const res = await axios.get(backendUrl + "/api/product/list");
+  //     setProducts(res.data.products);
+  //   } catch (error) {
+  //     toast.error(error?.response?.data?.message || error.message);
+  //   }
+  // };
 
   const addToCart = async (productId, size, quantity = 1) => {
     if (token) {
@@ -123,32 +123,32 @@ const ShopContextProvider = ({ children }) => {
     }
   };
 
-  const getCartAmount = () => {
-    if (!token) return null;
-    let totalAmount = 0;
-    cartItems.forEach((product) => {
-      const productData = products.find((p) => p._id === product.productId);
-      if (!productData) return;
-      product.sizes.forEach((p) => {
-        totalAmount += p.quantity * productData.price;
-      });
-    });
-    return totalAmount;
-  };
+  // const getCartAmount = () => {
+  //   if (!token) return null;
+  //   let totalAmount = 0;
+  //   cartItems.forEach((product) => {
+  //     const productData = products.find((p) => p._id === product.productId);
+  //     if (!productData) return;
+  //     product.sizes.forEach((p) => {
+  //       totalAmount += p.quantity * productData.price;
+  //     });
+  //   });
+  //   return totalAmount;
+  // };
 
-  useEffect(() => {
-    allProducts();
-  }, []);
-  useEffect(() => {
-    if (token) {
-      getUserCart(token);
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   allProducts();
+  // }, []);
+  // useEffect(() => {
+  //   if (token) {
+  //     getUserCart(token);
+  //   }
+  // }, [token]);
 
   // useEffect(() => {}, [token]);
 
   const value = {
-    products,
+    // products,
     currency,
     delivery_fee,
     search,
@@ -162,7 +162,7 @@ const ShopContextProvider = ({ children }) => {
     navigate,
     getCartCount,
     updateQuantity,
-    getCartAmount,
+    // getCartAmount,
     token,
     setToken,
     backendUrl,

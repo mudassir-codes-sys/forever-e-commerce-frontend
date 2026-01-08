@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "./Title";
 import ProductItem from "./ProductItem";
+import { useSelector } from "react-redux";
 
 function LatestCollection() {
-  const { products } = useContext(ShopContext);
+  const { products } = useSelector((state) => state.products);
   const [latestProducts, setLatestProducts] = useState([]);
   useEffect(() => {
     setLatestProducts(products.slice(0, 10));
